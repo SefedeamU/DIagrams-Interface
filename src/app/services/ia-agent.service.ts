@@ -25,23 +25,30 @@ export interface Message {
 })
 export class IaAgentService {
   private apiUrl = 'http://18.214.247.229:8001/memory';
-  userName = signal<string>('usuario');
+  readonly iaUserId = 10; // <-- Hardcodeado
+  readonly iaToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMCIsImV4cCI6MTc1MzA3MTUzNCwicm9sIjoiY3VzdG9tZXIifQ.NpEEtnuooKNh2fZwGHtRHz6F30uNQNCoHgUa45qBKb0';
+  readonly iaConversationId = '2f7d77cc-e7c2-423b-9989-81d8af94de03'; // <-- Hardcodeado
 
+  userName = signal<string>('IA');
   conversations = signal<Conversation[]>([]);
   loadingConversations = signal<boolean>(true);
-
   activeConversationId = signal<string | null>(null);
   messages = signal<Message[]>([]);
 
   constructor(private http: HttpClient) {}
 
-  askAgent(dto: UserQueryDto): Observable<any> {
+  askAgent(userQuery: string): Observable<any> {
+    const dto: UserQueryDto = {
+      token: this.iaToken,
+      conversationId: this.iaConversationId, // <-- Siempre usa este id
+      userQuery
+    };
     return this.http.post<any>(`${this.apiUrl}/ask`, dto);
   }
 
-  loadUserConversations(userId: number): void {
+  loadUserConversations(): void {
     this.loadingConversations.set(true);
-    this.http.get<Conversation[]>(`${this.apiUrl}/conversations/${userId}`)
+    this.http.get<Conversation[]>(`${this.apiUrl}/conversations/${this.iaUserId}`)
       .subscribe({
         next: (data) => {
           this.conversations.set(data);
@@ -67,18 +74,18 @@ export class IaAgentService {
     }
   }
 
-  createConversation(userId: number, title: string = 'Nueva conversación'): Observable<any> {
-    const payload = { userId, title };
+  createConversation(title: string = 'Nueva conversación'): Observable<any> {
+    const payload = { userId: this.iaUserId, title };
     return this.http.post(`${this.apiUrl}/conversation`, payload);
   }
 
-  deleteConversation(conversationId: string): void {
-    const userId = Number(localStorage.getItem('user_id'));
-    this.http.delete(`${this.apiUrl}/conversation/${userId}/${conversationId}`)
+  deleteConversation(): void {
+    // Siempre usa el id hardcodeado
+    this.http.delete(`${this.apiUrl}/conversation/${this.iaUserId}/${this.iaConversationId}`)
       .subscribe({
         next: () => {
-          this.loadUserConversations(userId);
-          if (this.activeConversationId() === conversationId) {
+          this.loadUserConversations();
+          if (this.activeConversationId() === this.iaConversationId) {
             this.activeConversationId.set(null);
             this.messages.set([]);
           }
@@ -89,13 +96,10 @@ export class IaAgentService {
       });
   }
 
-  loadFullConversation(conversationId: string): void {
-    const userId = Number(localStorage.getItem('user_id'));
-    if (!userId) return;
+  loadFullConversation(): void {
+    this.activeConversationId.set(this.iaConversationId);
 
-    this.activeConversationId.set(conversationId);
-
-    this.http.get<any[]>(`${this.apiUrl}/conversation-full/${userId}/${conversationId}`)
+    this.http.get<any[]>(`${this.apiUrl}/conversation-full/${this.iaUserId}/${this.iaConversationId}`)
       .subscribe({
         next: (history) => {
           const messages = history.flatMap(item => [

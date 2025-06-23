@@ -1,3 +1,29 @@
 :host ::ng-deep app-chat-float {
   height: 100%;
 }
+/* Scrollbar moderno y minimalista */
+::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2dd4bf; /* emerald-400 */
+  border-radius: 8px;
+  min-height: 40px;
+  border: 2px solid #1a202c; /* bg-gray-900 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #34d399; /* emerald-500 */
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2dd4bf #1a202c;
+}
