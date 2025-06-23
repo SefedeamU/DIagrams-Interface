@@ -1,0 +1,1 @@
+if ($?) { aws s3 cp .\dist\hacka-cloud-2025\browser\ s3://hacka-cloud/ --recursive --acl public-read }

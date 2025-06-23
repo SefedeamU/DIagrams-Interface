@@ -1,0 +1,267 @@
+<div class="min-h-screen w-full flex overflow-x-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
+  <!-- Sidebar -->
+  <aside class="w-20 flex flex-col justify-between items-center py-8 bg-gray-900 border-r border-gray-800">
+    <!-- Botones superiores -->
+    <div class="flex flex-col items-center space-y-5 w-full">
+      <ng-container *ngIf="!modoPerfil">
+        <button
+          class="group flex flex-col items-center transition"
+          [ngClass]="{
+            'text-emerald-400 hover:text-emerald-300': imagen || svg,
+            'text-gray-500 cursor-not-allowed': !imagen && !svg
+          }"
+          [disabled]="!imagen && !svg"
+          title="Exportar"
+          (click)="mostrarModalExportar = true"
+        >
+          <span class="material-icons mb-1 text-xl">download</span>
+          <span class="text-sm font-medium">Exportar</span>
+        </button>
+
+        <button class="group flex flex-col items-center text-emerald-400 hover:text-emerald-300 transition" title="Ayuda">
+          <span class="material-icons mb-1 text-xl">help</span>
+          <span class="text-sm font-medium">Ayuda</span>
+        </button>
+      </ng-container>
+    </div>
+
+    <!-- Botones inferiores -->
+    <div class="flex flex-col items-center space-y-5 w-full">
+      <button *ngIf="!modoPerfil" class="group flex flex-col items-center text-emerald-400 hover:text-emerald-300 transition" title="Perfil" (click)="irAPerfil()">
+        <span class="material-icons mb-1 text-2xl">account_circle</span>
+        <span class="text-sm font-medium">Perfil</span>
+      </button>
+      <button *ngIf="modoPerfil" class="group flex flex-col items-center text-emerald-400 hover:text-emerald-300 transition" title="Dashboard" (click)="irADashboard()">
+        <span class="material-icons mb-1 text-2xl">dashboard</span>
+        <span class="text-sm font-medium">Dashboard</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido principal con divisor -->
+  <main class="flex-1 flex flex-col md:flex-row gap-0 p-8 overflow-x-hidden">
+    <ng-container *ngIf="!modoPerfil; else perfilView">
+
+      <!-- Panel izquierdo: Editor + Chat lateral + Botón abajo -->
+      <section
+        class="bg-gray-800 rounded-tl-xl rounded-bl-xl shadow-lg p-6 flex flex-col min-w-[400px] h-full"
+        [ngStyle]="{ width: leftWidth + 'px' }"
+      >
+        <!-- Encabezado -->
+        <h2 class="text-xl font-semibold text-emerald-400 mb-4 flex items-center justify-between">
+          <span>Editor de código</span>
+            <button
+              class="relative w-14 h-8 flex items-center rounded-full transition-colors duration-300 focus:outline-none border-2 border-transparent"
+              [ngClass]="{
+                'bg-emerald-500 border-emerald-400': mostrarChat,
+                'bg-gray-700 border-transparent': !mostrarChat
+              }"
+              (click)="toggleChat()"
+              type="button"
+              title="Mostrar/Ocultar chat IA"
+            >
+              <!-- Fondo decorativo -->
+              <span
+                class="absolute left-0 top-0 w-full h-full rounded-full transition-colors duration-300"
+                [ngClass]="{
+                  'bg-emerald-400/20': mostrarChat,
+                  'bg-gray-600/30': !mostrarChat
+                }"
+              ></span>
+
+              <!-- Bola blanca con ícono de IA -->
+              <span
+                class="absolute bg-white w-7 h-7 rounded-full shadow-md transition-all duration-300 flex items-center justify-center"
+                [ngStyle]="{
+                  transform: mostrarChat ? 'translateX(21px)' : 'translateX(0px)'
+                }"
+                style="left: 2px; top: 0.3px; z-index: 2"
+              >
+                <span
+                  class="material-icons transition-colors duration-300"
+                  style="font-size: 18px;"
+                  [ngClass]="{
+                    'text-emerald-500': mostrarChat,
+                    'text-gray-400': !mostrarChat
+                  }"
+                >
+                  auto_awesome
+                </span>
+              </span>
+            </button>
+
+        </h2>
+
+        <!-- Contenedor editor/chat con divisor interno (solo si hay chat) -->
+        <div
+          id="editor-chat-container"
+          class="flex flex-1 overflow-hidden relative"
+        >
+          <!-- Editor -->
+          <div
+            class="flex flex-col h-full pr-2"
+            [ngStyle]="{ width: mostrarChat ? editorInnerWidth + 'px' : '100%' }"
+          >
+            <textarea
+              #editorArea
+              [(ngModel)]="code"
+              placeholder="# Escribe aquí tu código para generar el diagrama..."
+              class="flex-1 resize-none bg-gray-900 text-white rounded-lg p-4 font-mono text-base outline-none border-2 border-transparent focus:border-emerald-400 transition duration-300"
+            ></textarea>
+          </div>
+
+          <!-- Solo si el chat está activado, mostramos divisor + chat -->
+          <ng-container *ngIf="mostrarChat">
+            <!-- Divisor entre editor y chat IA -->
+            <div
+              class="w-[8px] cursor-col-resize bg-emerald-600/20 hover:bg-emerald-400 transition rounded-md"
+              (mousedown)="startInnerResize($event)"
+              title="Ajustar ancho entre editor y chat"
+            ></div>
+
+            <!-- Chat lateral -->
+            <div class="h-full pl-2 flex-1 min-w-[250px]">
+
+              <app-chat-float class="h-full w-full" (cerrarChat)="mostrarChat = false"></app-chat-float>
+            </div>
+          </ng-container>
+        </div>
+
+
+        <!-- Botón Generar diagrama -->
+        <button
+          class="mt-4 py-2 w-full rounded bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition"
+          (click)="generarDiagrama()"
+          [disabled]="loading"
+        >
+          <span *ngIf="loading" class="animate-spin mr-2 material-icons align-middle">autorenew</span>
+          Generar diagrama
+        </button>
+
+        <!-- Mensaje de error -->
+        <div *ngIf="error" class="text-red-400 mt-2 text-center">{{ error }}</div>
+      </section>
+
+      <!-- Divisor mejorado -->
+      <div
+        class="group relative w-[12px] flex items-center justify-center cursor-col-resize select-none transition-all bg-gradient-to-b from-gray-700 via-gray-800 to-gray-700 hover:from-emerald-500 hover:via-emerald-600 hover:to-emerald-500 border-l border-r border-gray-900 shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        (mousedown)="startResizing($event)"
+        tabindex="0"
+        style="z-index: 10;"
+        aria-label="Barra de redimensionar"
+        role="separator"
+      >
+        <!-- Área visual central -->
+        <div
+          class="w-1.5 h-12 rounded-full bg-gray-400 opacity-60 group-hover:bg-emerald-300 transition-all duration-300"
+        ></div>
+
+        <!-- Zona de interacción invisible para mejor UX -->
+        <div class="absolute inset-0 hover:bg-emerald-100/5 active:bg-emerald-100/10 rounded-md"></div>
+      </div>
+
+      <!-- Panel derecho (Vista previa interactiva tipo draw.io) -->
+      <section
+        class="bg-gray-800 rounded-tr-xl rounded-br-xl shadow-lg p-6 flex flex-col items-center justify-start flex-1 min-w-[400px] overflow-hidden"
+      >
+        <h2 class="text-xl font-semibold text-emerald-400 mb-4">Vista previa interactiva</h2>
+
+        <!-- Contenedor con fondo cuadriculado y zoom -->
+        <div
+        class="w-full h-full bg-gray-900 rounded-lg relative border border-gray-700"
+        style="background-image: linear-gradient(to right, #2d3748 1px, transparent 1px),
+              linear-gradient(to bottom, #2d3748 1px, transparent 1px);
+              background-size: 20px 20px;
+              overflow: hidden;"
+      >
+
+          <div
+            class="absolute top-1/2 left-1/2 cursor-grab active:cursor-grabbing select-none"
+            [ngStyle]="{
+              'transform': 'translate(calc(-50% + ' + offsetX + 'px), calc(-50% + ' + offsetY + 'px)) scale(' + zoomLevel + ')'
+            }"
+            (mousedown)="startPan($event)"
+            (mouseup)="endPan()"
+            (mouseleave)="endPan()"
+            (mousemove)="onPan($event)"
+          >
+
+
+            <div *ngIf="safeSvg; else vacio" [innerHTML]="safeSvg"></div>
+          </div>
+
+          <!-- Botón de reset -->
+          <button
+            (click)="resetZoom()"
+            class="absolute top-4 right-4 z-50 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded shadow-lg"
+          >
+            Reset
+          </button>
+
+          <!-- Controles de zoom -->
+          <div class="absolute top-16 right-4 z-50 flex flex-row space-x-2">
+            <button
+              (click)="zoomIn()"
+              class="w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white text-lg rounded shadow"
+              title="Acercar"
+            >+</button>
+            <button
+              (click)="zoomOut()"
+              class="w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white text-lg rounded shadow"
+              title="Alejar"
+            >−</button>
+
+          <ng-template #vacio>
+            <span class="text-gray-500 w-full text-center block p-4">Aquí se mostrará tu diagrama generado (SVG o PNG)</span>
+          </ng-template>
+        </div>
+    </div>
+  </section>
+
+    </ng-container>
+    <!-- Botón de chat flotante -->
+
+    <!-- Vista de perfil -->
+    <ng-template #perfilView>
+      <section class="flex-1 bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center">
+        <h2 class="text-xl font-semibold text-emerald-400 mb-4">Perfil de usuario</h2>
+        <span class="text-gray-400">Aquí irá la información del perfil.</span>
+      </section>
+    </ng-template>
+  </main>
+</div>
+
+
+<!-- MODAL DE EXPORTACIÓN -->
+<div
+  *ngIf="mostrarModalExportar"
+  class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+>
+  <div class="bg-gray-800 border border-gray-700 rounded-lg p-6 shadow-xl w-[300px]">
+    <h3 class="text-lg text-emerald-400 font-semibold mb-4 text-center">Descargar diagrama</h3>
+
+    <div class="flex flex-col space-y-3">
+      <button
+        class="bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded shadow"
+        (click)="descargarImagenPNG()"
+        [disabled]="!imagen"
+      >
+        Descargar PNG
+      </button>
+      <button
+        class="bg-emerald-500 hover:bg-emerald-600 text-white py-2 rounded shadow"
+        (click)="descargarImagenSVG()"
+        [disabled]="!svg"
+      >
+        Descargar SVG
+      </button>
+    </div>
+
+    <button
+      class="mt-6 w-full py-2 rounded bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold shadow transition text-center"
+      (click)="mostrarModalExportar = false"
+    >
+      Cancelar
+    </button>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-emerald-900">
+  <div class="bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-md">
+    <h2 class="text-3xl font-bold text-emerald-400 mb-6 text-center">Crear cuenta</h2>
+    <form (ngSubmit)="onSubmit()" autocomplete="off" class="space-y-5">
+      <div>
+        <label class="block text-gray-300 mb-1" for="name">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          required
+          class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        />
+      </div>
+      <div>
+        <label class="block text-gray-300 mb-1" for="email">Correo electrónico</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        />
+      </div>
+      <div>
+        <label class="block text-gray-300 mb-1" for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        />
+      </div>
+      <button
+        type="submit"
+        class="w-full py-2 rounded bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition"
+      >
+        Registrarse
+      </button>
+      <div *ngIf="error" class="text-red-400 text-center mt-2">{{ error }}</div>
+      <div *ngIf="success" class="text-emerald-400 text-center mt-2">{{ success }}</div>
+    </form>
+    <!-- Enlace a login -->
+      <div *ngIf="error" class="text-red-400 text-center mt-2">{{ error }}</div>
+      <div *ngIf="success" class="text-emerald-400 text-center mt-2">{{ success }}</div>
+      <div class="text-center mt-4">
+        <a
+          routerLink="/login"
+          class="text-emerald-400 hover:underline hover:text-emerald-300 transition"
+        >
+          ¿Ya tienes cuenta? ¡Inicia sesión aquí!
+        </a>
+      </div>
+  </div>
+
+</div>

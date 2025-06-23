@@ -1,0 +1,35 @@
+<!-- Chat como extensión lateral -->
+<div
+  class="h-full flex flex-col bg-gray-900 rounded-xl shadow-lg border-2 border-transparent transition-all duration-300 overflow-hidden"
+  [ngClass]="{ 'border-emerald-400': inputActivo }"
+>
+  <div class="bg-emerald-600 rounded-tr-lg px-4 py-2 flex justify-between items-center select-none">
+    <span class="font-semibold text-white">Chat IA</span>
+  </div>
+  <div class="flex-1 overflow-y-auto p-4 text-white">
+    <div *ngFor="let msg of mensajes" class="mb-2">
+      <div [ngClass]="msg.tipo === 'user' ? 'text-right' : 'text-left'">
+        <span
+          class="inline-block px-3 py-1 rounded-lg"
+          [ngClass]="msg.tipo === 'user' ? 'bg-emerald-500' : 'bg-gray-700'"
+        >
+          {{ msg.texto }}
+        </span>
+      </div>
+    </div>
+  </div>
+  <form class="flex border-t border-gray-700 p-3 gap-2 bg-gray-900" (ngSubmit)="enviarMensaje()">
+    <input
+      [(ngModel)]="mensaje"
+      name="mensaje"
+      class="flex-1 bg-gray-800 px-4 py-3 text-white rounded-lg outline-none border-2 border-transparent transition"
+      placeholder="Escribe tu mensaje..."
+      autocomplete="off"
+      (focus)="inputActivo = true"
+      (blur)="inputActivo = false"
+    />
+    <button type="submit" class="px-4 text-emerald-400 hover:text-emerald-200">
+      <span class="material-icons">send</span>
+    </button>
+  </form>
+</div>
