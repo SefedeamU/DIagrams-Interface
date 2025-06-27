@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class DiagramsService {
 
-  private apiUrl = 'https://du8u287sjk.execute-api.us-east-1.amazonaws.com/diagram';
+  private apiUrl = 'https://wadl1xe2lh.execute-api.us-east-1.amazonaws.com/dev/diagram';
 
   constructor(private http: HttpClient) { }
 
