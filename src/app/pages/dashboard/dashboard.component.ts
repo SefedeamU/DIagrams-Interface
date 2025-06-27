@@ -160,6 +160,9 @@ generarDiagrama() {
         .replace(/(<text[^>]*?)fill="[^"]*"/gi, '$1fill="white"')
         .replace(/(style="[^"]*?)fill:\s?#?[0-9a-fA-F]{3,6};?/gi, '$1fill:white;');
 
+
+
+
       console.log('SVG final (textos blancos + fondo transparente):', svgString);
 
       this.safeSvg = this.sanitizer.bypassSecurityTrustHtml(svgString);
