@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "hacka-cloud-2025": {
+    "diagrams-generator": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/hacka-cloud-2025",
+            "outputPath": "dist/diagrams-generator",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -59,10 +59,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "hacka-cloud-2025:build:production"
+              "buildTarget": "diagrams-generator:build:production"
             },
             "development": {
-              "buildTarget": "hacka-cloud-2025:build:development"
+              "buildTarget": "diagrams-generator:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -24,7 +24,7 @@ export interface Message {
   providedIn: 'root'
 })
 export class IaAgentService {
-  private apiUrl = 'http://18.214.247.229:8001/memory';
+  private apiUrl = 'https://api.the-ecco.site/users';
   readonly iaUserId = 10; // <-- Hardcodeado
   readonly iaToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMCIsImV4cCI6MTc1MzA3MTUzNCwicm9sIjoiY3VzdG9tZXIifQ.NpEEtnuooKNh2fZwGHtRHz6F30uNQNCoHgUa45qBKb0';
   readonly iaConversationId = '2f7d77cc-e7c2-423b-9989-81d8af94de03'; // <-- Hardcodeado

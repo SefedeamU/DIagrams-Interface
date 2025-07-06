@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  private apiUrl = 'https://tu-backend.com/api/auth'; // Cambia por tu URL real
+  private apiUrl = 'https://api.the-ecco.site/users'; // Cambia por tu URL real
 
   constructor(private http: HttpClient) { }
 
