@@ -9,5 +9,5 @@ import { RouterOutlet } from '@angular/router';
 })
 
 export class AppComponent {
-  title = 'hacka-cloud-2025';
+  title = 'Nimbusgraph';
 }
